@@ -46,7 +46,8 @@ class Turtle:
     def open(self, driver_choice = Driver.PHANTOM):
         try:
             self._set_driver(driver_choice)
-            self.log = Log(str(datetime.now()))
+            date = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
+            self.log = Log(date)
             
             self.log.append("PROGRAM STARTED!", False)
             driver_name = next(name for name, value in vars(Driver).items() if value == driver_choice)

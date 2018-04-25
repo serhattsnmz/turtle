@@ -9,7 +9,7 @@ class Log:
     log_dir  = "logs/"
     log_path = ""
 
-    def __init__(self, log_file_name = str(datetime.now())):
+    def __init__(self, log_file_name = datetime.now().strftime("%y-%m-%d_%H-%M-%S")):
         if not os.path.exists(self.log_dir):
             os.makedirs(self.log_dir)
 
@@ -21,13 +21,15 @@ class Log:
 
     def append(self, log_text, write_to_console = True):
         with open(self.log_path, "a") as f:
-            f.write(str(datetime.now()) + " - " + log_text + "\n")
+            date = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
+            f.write(date + " - " + log_text + "\n")
         if write_to_console:
             print(log_text)
 
     def append_exception(self, exp, write_to_console = True):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         with open(self.log_path, "a") as f:
-            f.write(str(datetime.now()) + " - ## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno) + "\n")
+            date = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
+            f.write(date + " - ## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno) + "\n")
         if write_to_console:
             print("## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno))

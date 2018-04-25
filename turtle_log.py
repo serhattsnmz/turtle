@@ -19,13 +19,15 @@ class Log:
             f = open(self.log_path, "w")
             f.close()
 
-    def append(self, log_text):
+    def append(self, log_text, write_to_console = True):
         with open(self.log_path, "a") as f:
             f.write(str(datetime.now()) + " - " + log_text + "\n")
-        print(log_text)
+        if write_to_console:
+            print(log_text)
 
-    def append_exception(self, exp):
+    def append_exception(self, exp, write_to_console = True):
         exc_type, exc_obj, exc_tb = sys.exc_info()
         with open(self.log_path, "a") as f:
             f.write(str(datetime.now()) + " - ## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno) + "\n")
-        print("## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno))
+        if write_to_console:
+            print("## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno))

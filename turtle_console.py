@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from getpass        import getpass
 from colorama       import init, deinit, Fore
 from termcolor      import colored, cprint
+
+from turtle         import Turtle, Driver, Download_Choice
 
 import os
 import json
@@ -44,13 +47,194 @@ def create_config_if_not_exist():
             print_yellow("Try run this script as root.")
             return
 
+def header():
+    print()
+    print_magenta("----------------------------------", "\n\n")
+    print_magenta("### Instagram Photo Downloader ###", "\n\n")
+    print_magenta("----------------------------------")
+    print()
+
+def line():
+    print_magenta("-----------------")
+
+def read_json():
+    if not os.path.isfile("config.json"):
+        return None
+    else:
+        try:
+            with open("config.json") as data_file:
+                data = json.load(data_file)
+            return data
+        except:
+            return None
+
+def get_username():
+    if args.username:
+        return args.username
+    else:
+        config = read_json()
+        if config and config["username"] != "":
+            return config["username"]
+        else:
+            return input("Username : ")
+
+def get_password():
+    if args.password:
+        return args.password
+    else:
+        config = read_json()
+        if config and config["password"] != "":
+            return config["password"]
+        else:
+            return getpass("Password : ")
+
+def get_path():
+    if args.path:
+        return args.path
+    else:
+        config = read_json()
+        if config and config["path"] != "":
+            return config["path"]
+        else:
+            return "pictures"
+
+def choose_driver():
+    if args.driver == 1:
+        driver = Driver.PHANTOM
+        print_cyan("Driver : PhantomJS")
+    elif args.driver == 2:
+        driver = Driver.CHROME
+        print_cyan("Driver : Chrome")
+    elif args.driver == 3:
+        driver = Driver.FIREFOX
+        print_cyan("Driver : Firefox")
+    else:
+        config = read_json()
+        if config and "driver" in config and config["driver"] in [1,2,3]:
+            _dri = config["driver"]
+            if _dri == 1:
+                print_cyan("Driver : PhantomJS")
+                return Driver.PHANTOM
+            elif _dri == 2:
+                print_cyan("Driver : Chrome")
+                return Driver.CHROME
+            elif _dri == 3:
+                print_cyan("Driver : Firefox")
+                return Driver.FIREFOX
+
+        while True:
+            print_cyan("CHOOSE DRIVER : [1]PhantomJS [2]Chrome [3]Firefox")
+            d_choice = input("Driver : ")
+
+            if d_choice == "1":
+                driver = Driver.PHANTOM
+                break
+            elif d_choice == "2":
+                driver = Driver.CHROME
+                break
+            elif d_choice == "3":
+                driver = Driver.FIREFOX
+                break
+    return driver
+
+def get_download_choice():
+    while True:
+        print("How many stories do you want to download?")
+
+        print_magenta("Give number ", "")
+        print_cyan("-> For downloading the number of stories")
+
+        print_magenta("Give '0'    ", "")
+        print_cyan("-> For downloading all stroies")
+
+        print_magenta("Live empty  ", "")
+        print_cyan("-> For downloading last stories you do not have")
+
+        choice = input("Give input : ")
+
+        if choice == "":
+            return Download_Choice.UPDATE, 0
+        else:
+            if RepresentsInt(choice):
+                int_choice = int(choice)
+                if int_choice == 0:
+                    return Download_Choice.DOWNLOAD_ALL, 0
+                elif int_choice > 0:
+                    return Download_Choice.SOME, int_choice
+                else:
+                    print_red("It must be bigger than zero!")
+            else:
+                print_red("It must be number or empty!")
+
+def RepresentsInt(s):
+    try: 
+        int(s)
+        return True
+    except ValueError:
+        return False
+
 def core():
+    # Config
     parse_args()
     create_config_if_not_exist()
     init()
     clear_screen()
 
+    # Header
     header()
+
+    # Get info
+    driver = choose_driver()
+    username = get_username()
+    password = get_password()
+    path = get_path()
+
+    line()
+
+    # Start Normal Download
+    if not args.list:
+        t = Turtle()
+        t.set_path(path)
+        t.open(driver)
+        t.sign_in(username, password)
+
+        line()
+
+        pic_user = input("Username for Photos : ")
+        t.get_img_links(pic_user)
+
+        line()
+
+        down_choice, count = get_download_choice()
+        t.download_photos(pic_user, down_choice, count)
+
+        t.close()
+    # List Download
+    else:
+        json_path = ""
+        if os.path.exists(args.list):
+            json_path = args.list
+        else:
+            print_red("Json path does not exist!")
+            return False
+
+        with open(json_path) as file:
+            data = json.load(file)
+
+            t = Turtle()
+            t.set_path(path)
+            t.open(driver)
+            t.sign_in(username, password)
+            line()
+
+            for pic_user in data:
+                t.get_img_links(pic_user)
+                line()
+
+                t.download_photos(pic_user, Download_Choice.UPDATE)
+                line()
+                
+            t.close()
 
 if __name__ == "__main__":
     core()

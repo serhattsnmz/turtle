@@ -48,8 +48,9 @@ class Turtle:
             self._set_driver(driver_choice)
             self.log = Log(str(datetime.now()))
             
-            self.log.append("NEW OBJECT CREATED!")
-            self.log.append("Driver : " + str(driver_choice))
+            self.log.append("PROGRAM STARTED!", False)
+            driver_name = next(name for name, value in vars(Driver).items() if value == driver_choice)
+            self.log.append("Driver : " + str(driver_name), False)
             return True
         except Exception as exp:
             self.log.append_exception(exp)
@@ -287,12 +288,14 @@ class Turtle:
                     break
 
             # Log information
+            self.log.append("-------------------------------")
             self.log.append("$ Download Completed.")
             self.log.append("$ Total found stories     : " + str(total_photo_number))
             self.log.append("$ Total downloaded stories: " + str(total_download))
             self.log.append("$ Total found photos      : " + str(download_number + already_exists_number))
             self.log.append("$ Total Download          : " + str(download_number))
             self.log.append("$ Already exists          : " + str(already_exists_number))
+            self.log.append("-------------------------------")
             return True
         except Exception as exp:
             self.log.append_exception(exp)
@@ -300,33 +303,33 @@ class Turtle:
 
 class Turtle_Quick:
 
-    def download_all_user_pic(username, password, pic_user, path = None):
+    def download_all_user_pic(username, password, pic_user, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:
             t.set_path(path)
-        t.open()
+        t.open(driver)
         t.sign_in(username, password)
         t.get_img_links(pic_user)
         t.download_photos(pic_user, Download_Choice.DOWNLOAD_ALL)
         t.close()
         del(t)
 
-    def update_user_pic(username, password, pic_user, path = None):
+    def update_user_pic(username, password, pic_user, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:
             t.set_path(path)
-        t.open()
+        t.open(driver)
         t.sign_in(username, password)
         t.get_img_links(pic_user)
         t.download_photos(pic_user, Download_Choice.UPDATE)
         t.close()
         del(t)
 
-    def download_some_user_pic(username, password, pic_user, count, path = None):
+    def download_some_user_pic(username, password, pic_user, count, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:
             t.set_path(path)
-        t.open()
+        t.open(driver)
         t.sign_in(username, password)
         t.get_img_links(pic_user)
         t.download_photos(pic_user, Download_Choice.SOME, count)

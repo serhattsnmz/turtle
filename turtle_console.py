@@ -249,11 +249,11 @@ def core():
                     t.log.append("-------------------------------", False)
 
                 # Add all user report to Log file
-                t.log.append("-------------------------", False)
                 t.log.append("$$ ALL DOWNLOAD RESULT $$")
-                t.log.append("-------------------------", False)
+                t.log.append("-------------------------")
                 for key, value in report.items():
                     t.log.append("$$ " + str(value) + " $$ " + str(key) + " $$")
+                t.log.append("-------------------------")
 
             t.close()
 

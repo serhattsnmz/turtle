@@ -241,10 +241,10 @@ def core():
 
                     # Add download result to Log file
                     if t.result:
-                        t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0], False)
+                        t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0])
                         report.update({pic_user_item[0] : True})
                     else:                
-                        t.log.append("### RESULT ### FALSE ### " + pic_user_item[0], False)
+                        t.log.append("### RESULT ### FALSE ### " + pic_user_item[0])
                         report.update({pic_user_item[0] : False})
                     t.log.append("-------------------------------", False)
 

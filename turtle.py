@@ -1,56 +1,38 @@
 # -*- coding: utf-8 -*-
 
 from selenium       import webdriver
-from getpass        import getpass
 from urllib.request import urlretrieve
 from time           import sleep
 from datetime       import datetime
 from turtle_log     import Log
-
 import os
-import json
 
 class Driver:
     PHANTOM = 1
     CHROME  = 2
     FIREFOX = 3
 
+class Download_Choice:
+    DOWNLOAD_ALL    = 1
+    UPDATE          = 2
+    SOME            = 3
+
 class Turtle:
 
-    _user_username   = ""
-    _user_password   = ""
-    _pic_path        = ""
+    _pic_path        = "pictures"
     _driver          = None
     log              = None
 
+    _pic_user_path      = ""
+    _pic_user_vid_path  = ""
+
     imgLinks    = []
 
-    def __init__(self, username, password, pic_path = "pictures"):
-        self._user_username = username
-        self._user_password = password
-        self._pic_path = pic_path
+    # Set Path (optional) | return : None
+    def set_path(self, path):
+        self._pic_path = path
 
-    # Open driver and Log
-    def open(self, driver_choice = Driver.PHANTOM):
-        try:
-            self._set_driver(driver_choice)
-            self.log = Log(str(datetime.now()))
-            
-            self.log.append("NEW OBJECT CREATED!")
-            self.log.append("User : " + self._user_username + " - Driver : " + str(driver_choice))
-        except Exception as exp:
-            self.log.append_exception(exp)
-
-    # Close driver and remove cookies
-    def close(self):
-        try:
-            self._driver.delete_all_cookies()
-            self._driver.quit()
-            self.log.append("Browser closed successfuly.")
-        except Exception as exp:
-            self.log.append_exception(exp)
-
-    # return : webdriver
+    # Set Driver | return : True
     def _set_driver(self, driver_choice):
         if driver_choice == Driver.CHROME:
             self._driver = webdriver.Chrome()
@@ -58,10 +40,34 @@ class Turtle:
             self._driver = webdriver.Firefox()
         else:
             self._driver = webdriver.PhantomJS()
-        return self._driver
+        return True
 
-    # return : True or False
-    def sign_in(self):
+    # Open driver and Log | return : True or False
+    def open(self, driver_choice = Driver.PHANTOM):
+        try:
+            self._set_driver(driver_choice)
+            self.log = Log(str(datetime.now()))
+            
+            self.log.append("NEW OBJECT CREATED!")
+            self.log.append("Driver : " + str(driver_choice))
+            return True
+        except Exception as exp:
+            self.log.append_exception(exp)
+            return False
+
+    # Close driver and remove cookies | return : True or False
+    def close(self):
+        try:
+            self._driver.delete_all_cookies()
+            self._driver.quit()
+            self.log.append("Browser closed successfuly.")
+            return True
+        except Exception as exp:
+            self.log.append_exception(exp)
+            return False
+
+    # Sign in to Instagram | return : True or False
+    def sign_in(self, username, password):
         try:
             self._driver.get("https://www.instagram.com/")
             sleep(2)
@@ -73,8 +79,8 @@ class Turtle:
                 pass
             
             # Send user info
-            self._driver.find_element_by_name("username").send_keys(self._user_username)
-            self._driver.find_element_by_name("password").send_keys(self._user_password)
+            self._driver.find_element_by_name("username").send_keys(username)
+            self._driver.find_element_by_name("password").send_keys(password)
             self._driver.find_element_by_tag_name("button").click()   
             sleep(4)
 
@@ -100,13 +106,14 @@ class Turtle:
             self.log.append_exception(exp)
             return False
 
-    # return : imgLinks [] or False
+    # Get pic_user picture links | return : True or False
     def get_img_links(self, pic_user):
         try:
             if not pic_user:
                 self.log.append("## Username must be given for finding photos!")
                 return False
-                
+            
+            self.log.append("$ USER : " + pic_user)
             self.log.append("Getting user...")
             self._driver.get("https://www.instagram.com/" + pic_user)
             
@@ -145,7 +152,183 @@ class Turtle:
                 sleep(2)
 
             self.log.append("> " + str(len(imgLinks)) + " < links found.")
-            return imgLinks
+            self.imgLinks = imgLinks
+            return True
         except Exception as exp:
             self.log.append_exception(exp)
             return False
+
+    # Create user folders and set to self. | return : True or False
+    def _create_pic_user_folders(self, pic_user):
+        try:
+            path = self._pic_path + "/" + pic_user
+
+            if not os.path.exists(path):
+                os.makedirs(path)
+            self._pic_user_path = path
+
+            vid_path = path + "/" + "videos"
+
+            if not os.path.exists(vid_path):
+                os.makedirs(vid_path)
+            self._pic_user_vid_path = vid_path
+
+            return True
+
+        except Exception as exp:
+            self.log.append_exception(exp)
+            return False
+    
+    # Download all pictures | return : True or False
+    def download_photos(self, pic_user_folder_name, download_choice = Download_Choice.UPDATE, download_photo_number = 0):
+        try:
+            total_photo_number      = len(self.imgLinks)
+            download_number         = 0
+            already_exists_number   = 0
+            just_last_photos        = True
+            total_download          = 0
+            done                    = False
+
+            # Set Download Choice
+            if download_choice == Download_Choice.UPDATE:
+                total_download = total_photo_number
+                just_last_photos = True
+
+            elif download_choice == Download_Choice.SOME and download_photo_number > 0:
+                total_download = download_photo_number
+                just_last_photos = False
+            
+            elif download_choice == Download_Choice.SOME and download_photo_number <= 0:
+                raise Exception("Download photo number must be bigger than 0!")
+
+            elif download_choice == Download_Choice.DOWNLOAD_ALL:
+                total_download = total_photo_number
+                just_last_photos = False
+
+            else:
+                raise Exception("Invalid download choice!")
+
+            # Create pic_user folders
+            self._create_pic_user_folders(pic_user_folder_name)
+
+            # Download Photos
+            for idx, link in enumerate(self.imgLinks):
+
+                # Go To Link
+                self._driver.get(link)
+
+                # Get Photo Taken Date
+                time = self._driver.find_element_by_tag_name("time").get_attribute("datetime").split("T")[0] + "_"
+                
+                # If page has many photos
+                try:
+                    img_count = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges.length')
+                    for i in range(img_count):
+                        is_video = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.is_video')
+                        
+                        if is_video:
+                            img_link = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.video_url')
+                        else:
+                            img_link = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.display_url')
+                        
+                        # Create Name
+                        s = img_link.split("/")
+                        name = time + s[-1]
+                        
+                        # Download photos
+                        if is_video:
+                            path = self._pic_user_vid_path + "/" + name
+                        else:
+                            path = self._pic_user_path + "/" + name
+                        
+                        if not os.path.isfile(path):
+                            urlretrieve(img_link, path)
+                            download_number += 1
+                        else:
+                            if just_last_photos:
+                                done = True
+                            already_exists_number += 1
+                # If page has single photo
+                except:
+                    try:
+                        # If it is a video
+                        img_link = self._driver.find_element_by_tag_name("video").get_attribute("src")
+                        is_video = True
+                    except:
+                        # Get Picture URL
+                        tag = self._driver.find_element_by_css_selector('meta[property="og:image"]')
+                        img_link = tag.get_property("content")
+                        is_video = False
+                    
+                    # Create Name
+                    s = img_link.split("/")
+                    name = time + s[-1]
+                    
+                    # Download photos
+                    if is_video:
+                        path = self._pic_user_vid_path + "/" + name
+                    else:
+                        path = self._pic_user_path + "/" + name
+                    
+                    if not os.path.isfile(path):
+                        urlretrieve(img_link, path)
+                        download_number += 1
+                    else:
+                        if just_last_photos:
+                            done = True
+                        already_exists_number += 1
+                
+                # Info
+                self.log.append("> " + str(idx + 1) + " / " + str(total_download) + " stories downloaded...")
+                    
+                # Max photo check - Break outer loop when inner loop broken
+                if idx == total_download - 1 or done:
+                    self.log.append("> " + str(idx + 1) + " < stories downloaded.")
+                    break
+
+            # Log information
+            self.log.append("$ Download Completed.")
+            self.log.append("$ Total found stories     : " + str(total_photo_number))
+            self.log.append("$ Total downloaded stories: " + str(total_download))
+            self.log.append("$ Total found photos      : " + str(download_number + already_exists_number))
+            self.log.append("$ Total Download          : " + str(download_number))
+            self.log.append("$ Already exists          : " + str(already_exists_number))
+            return True
+        except Exception as exp:
+            self.log.append_exception(exp)
+            return False
+
+class Turtle_Quick:
+
+    def download_all_user_pic(username, password, pic_user, path = None):
+        t = Turtle()
+        if path:
+            t.set_path(path)
+        t.open()
+        t.sign_in(username, password)
+        t.get_img_links(pic_user)
+        t.download_photos(pic_user, Download_Choice.DOWNLOAD_ALL)
+        t.close()
+        del(t)
+
+    def update_user_pic(username, password, pic_user, path = None):
+        t = Turtle()
+        if path:
+            t.set_path(path)
+        t.open()
+        t.sign_in(username, password)
+        t.get_img_links(pic_user)
+        t.download_photos(pic_user, Download_Choice.UPDATE)
+        t.close()
+        del(t)
+
+    def download_some_user_pic(username, password, pic_user, count, path = None):
+        t = Turtle()
+        if path:
+            t.set_path(path)
+        t.open()
+        t.sign_in(username, password)
+        t.get_img_links(pic_user)
+        t.download_photos(pic_user, Download_Choice.SOME, count)
+        t.close()
+        del(t)

@@ -101,7 +101,7 @@ class Turtle:
             try:
                 self._driver.find_element_by_name("verificationCode")
                 self.log.append("Username and Password are correct.")
-                self.log.append("## Verification Found!")
+                self.log.append("## (ERROR) Verification Found!")
                 self._status_sign_in = False
                 return False
             except:
@@ -115,7 +115,7 @@ class Turtle:
             except:
                 pass
         
-            self.log.append("## Username or Password are NOT CORRECT!")
+            self.log.append("## (ERROR) Username or Password are NOT CORRECT!")
             self._status_sign_in = False
             return False
         except Exception as exp:
@@ -130,7 +130,8 @@ class Turtle:
             return False
         try:
             if not pic_user:
-                self.log.append("## Username must be given for finding photos!")
+                self.log.append("## (ERROR) Username must be given for finding photos!")
+                self._status_links = False
                 return False
             
             self.log.append("$ USER : " + pic_user)
@@ -164,8 +165,9 @@ class Turtle:
 
                 # If program stops  to collect links> then break while
                 if error == 10:
-                    self.log.append("## Circle broken for user : " + pic_user)
-                    break
+                    self.log.append("## (ERROR) Circle broken for user : " + pic_user)
+                    self._status_links = False
+                    return False
                 
                 # Scroll down the picture
                 self._driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")

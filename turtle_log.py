@@ -30,6 +30,6 @@ class Log:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         with open(self.log_path, "a", encoding="utf-8") as f:
             date = datetime.now().strftime("%y-%m-%d_%H-%M-%S")
-            f.write(date + " - ## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno) + "\n")
+            f.write(date + " - ## (ERROR) : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno) + "\n")
         if write_to_console:
-            print("## Error : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno))
+            print("## (ERROR) : " + str(exp) + " - Type : " + str(exc_type) + " - Line : " + str(exc_tb.tb_lineno))

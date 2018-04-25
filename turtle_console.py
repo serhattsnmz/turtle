@@ -196,19 +196,21 @@ def core():
         t = Turtle()
         t.set_path(path)
         t.open(driver)
-        t.sign_in(username, password)
+        sign_result = t.sign_in(username, password)
 
         line()
 
-        pic_user = input("Username for Photos : ")
-        t.get_img_links(pic_user)
+        if sign_result:
+            pic_user = input("Username for Photos : ")
+            link_result = t.get_img_links(pic_user)
 
-        line()
-
-        down_choice, count = get_download_choice()
-        t.download_photos(pic_user, down_choice, count)
+            line()
+            if link_result:
+                down_choice, count = get_download_choice()
+                t.download_photos(pic_user, down_choice, count)
 
         t.close()
+
     # List Download
     else:
         json_path = ""
@@ -218,22 +220,41 @@ def core():
             print_red("Json path does not exist!")
             return False
 
-        with open(json_path) as file:
+        with open(json_path, encoding="utf-8") as file:
             data = json.load(file)
 
             t = Turtle()
             t.set_path(path)
             t.open(driver)
-            t.sign_in(username, password)
+            sign_result = t.sign_in(username, password)
             line()
 
-            for pic_user in data:
-                t.get_img_links(pic_user)
-                line()
+            if sign_result:
+                report = {}
 
-                t.download_photos(pic_user, Download_Choice.UPDATE)
-                line()
-                
+                for pic_user_item in data:
+                    t.get_img_links(pic_user_item[1])
+                    line()
+
+                    t.download_photos(pic_user_item[0], Download_Choice.UPDATE)
+                    line()
+
+                    # Add download result to Log file
+                    if t.result:
+                        t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0], False)
+                        report.update({pic_user_item[0] : True})
+                    else:                
+                        t.log.append("### RESULT ### FALSE ### " + pic_user_item[0], False)
+                        report.update({pic_user_item[0] : False})
+                    t.log.append("-------------------------------", False)
+
+                # Add all user report to Log file
+                t.log.append("-------------------------", False)
+                t.log.append("$$ ALL DOWNLOAD RESULT $$")
+                t.log.append("-------------------------", False)
+                for key, value in report.items():
+                    t.log.append("$$ " + str(value) + " $$ " + str(key) + " $$")
+
             t.close()
 
 if __name__ == "__main__":

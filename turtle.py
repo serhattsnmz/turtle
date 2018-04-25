@@ -28,6 +28,11 @@ class Turtle:
 
     imgLinks    = []
 
+    _status_driver  = False
+    _status_sign_in = False
+    _status_links   = False
+    result          = False
+
     # Set Path (optional) | return : None
     def set_path(self, path):
         self._pic_path = path
@@ -52,9 +57,12 @@ class Turtle:
             self.log.append("PROGRAM STARTED!", False)
             driver_name = next(name for name, value in vars(Driver).items() if value == driver_choice)
             self.log.append("Driver : " + str(driver_name), False)
+
+            self._status_driver = True
             return True
         except Exception as exp:
             self.log.append_exception(exp)
+            self._status_driver = False
             return False
 
     # Close driver and remove cookies | return : True or False
@@ -70,6 +78,9 @@ class Turtle:
 
     # Sign in to Instagram | return : True or False
     def sign_in(self, username, password):
+        if not self._status_driver:
+            self._status_sign_in = False            
+            return False
         try:
             self._driver.get("https://www.instagram.com/")
             sleep(2)
@@ -91,6 +102,7 @@ class Turtle:
                 self._driver.find_element_by_name("verificationCode")
                 self.log.append("Username and Password are correct.")
                 self.log.append("## Verification Found!")
+                self._status_sign_in = False
                 return False
             except:
                 pass
@@ -98,18 +110,24 @@ class Turtle:
             try:
                 self._driver.find_element_by_class_name("coreSpriteSearchIcon")
                 self.log.append("Username and Password are correct.")
+                self._status_sign_in = True                
                 return True
             except:
                 pass
         
             self.log.append("## Username or Password are NOT CORRECT!")
+            self._status_sign_in = False
             return False
         except Exception as exp:
             self.log.append_exception(exp)
+            self._status_sign_in = False
             return False
 
     # Get pic_user picture links | return : True or False
     def get_img_links(self, pic_user):
+        if not self._status_sign_in:
+            self._status_links = False
+            return False
         try:
             if not pic_user:
                 self.log.append("## Username must be given for finding photos!")
@@ -155,9 +173,12 @@ class Turtle:
 
             self.log.append("> " + str(len(imgLinks)) + " < links found.")
             self.imgLinks = imgLinks
+
+            self._status_links = True
             return True
         except Exception as exp:
             self.log.append_exception(exp)
+            self._status_links = False
             return False
 
     # Create user folders and set to self. | return : True or False
@@ -183,6 +204,9 @@ class Turtle:
     
     # Download all pictures | return : True or False
     def download_photos(self, pic_user_folder_name, download_choice = Download_Choice.UPDATE, download_photo_number = 0):
+        if not self._status_links:
+            self.result = False
+            return False
         try:
             total_photo_number      = len(self.imgLinks)
             download_number         = 0
@@ -297,9 +321,12 @@ class Turtle:
             self.log.append("$ Total Download          : " + str(download_number))
             self.log.append("$ Already exists          : " + str(already_exists_number))
             self.log.append("-------------------------------")
+            
+            self.result = True
             return True
         except Exception as exp:
             self.log.append_exception(exp)
+            self.result = False
             return False
 
 class Turtle_Quick:

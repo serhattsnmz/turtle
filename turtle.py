@@ -184,19 +184,22 @@ class Turtle:
             return False
 
     # Create user folders and set to self. | return : True or False
-    def _create_pic_user_folders(self, pic_user):
+    def _create_pic_user_folders(self, pic_user, create_video_dir = True):
         try:
+            # User root folder
             path = self._pic_path + "/" + pic_user
 
             if not os.path.exists(path):
                 os.makedirs(path)
             self._pic_user_path = path
 
-            vid_path = path + "/" + "videos"
+            # User pic folder
+            if create_video_dir:
+                vid_path = path + "/" + "videos"
 
-            if not os.path.exists(vid_path):
-                os.makedirs(vid_path)
-            self._pic_user_vid_path = vid_path
+                if not os.path.exists(vid_path):
+                    os.makedirs(vid_path)
+                self._pic_user_vid_path = vid_path
 
             return True
 
@@ -205,7 +208,7 @@ class Turtle:
             return False
     
     # Download all pictures | return : True or False
-    def download_photos(self, pic_user_folder_name, download_choice = Download_Choice.UPDATE, download_photo_number = 0):
+    def download_photos(self, pic_user_folder_name, download_choice = Download_Choice.UPDATE, download_photo_number = 0, download_video = True):
         if not self._status_links:
             self.result = False
             return False
@@ -237,7 +240,7 @@ class Turtle:
                 raise Exception("Invalid download choice!")
 
             # Create pic_user folders
-            self._create_pic_user_folders(pic_user_folder_name)
+            self._create_pic_user_folders(pic_user_folder_name, download_video)
 
             # Download Photos
             for idx, link in enumerate(self.imgLinks):
@@ -254,7 +257,10 @@ class Turtle:
                     for i in range(img_count):
                         is_video = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.is_video')
                         
-                        if is_video:
+                        if is_video:   
+                            # Video check
+                            if not download_video: continue
+
                             img_link = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.video_url')
                         else:
                             img_link = self._driver.execute_script('return window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_sidecar_to_children.edges[' + str(i) +'].node.display_url')
@@ -264,10 +270,8 @@ class Turtle:
                         name = time + s[-1]
                         
                         # Download photos
-                        if is_video:
-                            path = self._pic_user_vid_path + "/" + name
-                        else:
-                            path = self._pic_user_path + "/" + name
+                        if is_video:    path = self._pic_user_vid_path + "/" + name
+                        else:           path = self._pic_user_path + "/" + name
                         
                         if not os.path.isfile(path):
                             urlretrieve(img_link, path)
@@ -276,12 +280,16 @@ class Turtle:
                             if just_last_photos:
                                 done = True
                             already_exists_number += 1
+
                 # If page has single photo
                 except:
                     try:
                         # If it is a video
                         img_link = self._driver.find_element_by_tag_name("video").get_attribute("src")
                         is_video = True
+
+                        # Video Download allowed check
+                        if not download_video: continue
                     except:
                         # Get Picture URL
                         tag = self._driver.find_element_by_css_selector('meta[property="og:image"]')
@@ -293,17 +301,14 @@ class Turtle:
                     name = time + s[-1]
                     
                     # Download photos
-                    if is_video:
-                        path = self._pic_user_vid_path + "/" + name
-                    else:
-                        path = self._pic_user_path + "/" + name
+                    if is_video:    path = self._pic_user_vid_path + "/" + name
+                    else:           path = self._pic_user_path + "/" + name
                     
                     if not os.path.isfile(path):
                         urlretrieve(img_link, path)
                         download_number += 1
                     else:
-                        if just_last_photos:
-                            done = True
+                        if just_last_photos: done = True
                         already_exists_number += 1
                 
                 # Info
@@ -317,10 +322,10 @@ class Turtle:
             # Log information
             self.log.append("-------------------------------")
             self.log.append("$ Download Completed.")
-            self.log.append("$ Total found stories     : " + str(total_photo_number))
-            self.log.append("$ Total downloaded stories: " + str(total_download))
-            self.log.append("$ Total found photos      : " + str(download_number + already_exists_number))
-            self.log.append("$ Total Download          : " + str(download_number))
+            self.log.append("$ Total user stories      : " + str(total_photo_number))
+            self.log.append("$ Total harvested stories : " + str(total_download))
+            self.log.append("$ Total harvested photos  : " + str(download_number + already_exists_number))
+            self.log.append("$ Total Download          : $ " + str(download_number) + " $")
             self.log.append("$ Already exists          : " + str(already_exists_number))
             self.log.append("-------------------------------")
             

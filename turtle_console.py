@@ -270,14 +270,14 @@ def core():
                         t.download_photos(pic_user_item[0], down_choice, count, vid_choice)
                         line()
 
-                        # Add download result to Log file
-                        if t.result:
-                            t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0])
-                            report.update({pic_user_item[0] : True})
-                        else:                
-                            t.log.append("### RESULT ### FALSE ### " + pic_user_item[0])
-                            report.update({pic_user_item[0] : False})
-                        t.log.append("-------------------------------", False)
+                    # Add download result to Log file
+                    if t.result:
+                        t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0])
+                        report.update({pic_user_item[0] : True})
+                    else:                
+                        t.log.append("### RESULT ### FALSE ### " + pic_user_item[0])
+                        report.update({pic_user_item[0] : False})
+                    t.log.append("-------------------------------", False)
 
                 # Add all user report to Log file
                 t.log.append("$$ ALL DOWNLOAD RESULT $$")

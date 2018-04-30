@@ -207,11 +207,11 @@ class Turtle:
             self.log.append_exception(exp)
             return False
     
-    # Download all pictures | return : True or False
+    # Download all pictures | return : 0 or Total_Downloaded_Photo_Number
     def download_photos(self, pic_user_folder_name, download_choice = Download_Choice.UPDATE, download_photo_number = 0, download_video = True):
         if not self._status_links:
             self.result = False
-            return False
+            return 0
         try:
             total_photo_number      = len(self.imgLinks)
             download_number         = 0
@@ -330,11 +330,11 @@ class Turtle:
             self.log.append("-------------------------------")
             
             self.result = True
-            return True
+            return download_number
         except Exception as exp:
             self.log.append_exception(exp)
             self.result = False
-            return False
+            return 0
 
 class Turtle_Quick:
 

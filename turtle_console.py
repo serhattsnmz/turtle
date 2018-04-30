@@ -256,7 +256,7 @@ def core():
             line()
 
             if sign_result:
-                report = {}
+                report = []
 
                 # pic_user loop start
                 for pic_user_item in data:
@@ -264,26 +264,25 @@ def core():
                     link_result = t.get_img_links(pic_user_item[1])
                     line()
 
-                    if link_result:
-                        # Download pictures
-                        down_choice, count = get_download_choice()
-                        t.download_photos(pic_user_item[0], down_choice, count, vid_choice)
-                        line()
+                    # Download pictures
+                    down_choice, count = get_download_choice()
+                    total_download = t.download_photos(pic_user_item[0], down_choice, count, vid_choice)
+                    line()
 
                     # Add download result to Log file
                     if t.result:
                         t.log.append("### RESULT ### TRUE  ### " + pic_user_item[0])
-                        report.update({pic_user_item[0] : True})
+                        report.append([pic_user_item[0], True, total_download])
                     else:                
                         t.log.append("### RESULT ### FALSE ### " + pic_user_item[0])
-                        report.update({pic_user_item[0] : False})
-                    t.log.append("-------------------------------", False)
+                        report.append([pic_user_item[0], False, total_download])
+                    t.log.append("-------------------------------")
 
                 # Add all user report to Log file
                 t.log.append("$$ ALL DOWNLOAD RESULT $$")
                 t.log.append("-------------------------")
-                for key, value in report.items():
-                    t.log.append("$$ " + str(value) + " $$ " + str(key) + " $$")
+                for item in report:
+                    t.log.append("$$ " + str(item[1]) + " $$ Total Download : " + str(item[2]) + " $$ " + str(item[0]))
                 t.log.append("-------------------------")
 
             t.close()

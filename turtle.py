@@ -82,14 +82,8 @@ class Turtle:
             self._status_sign_in = False            
             return False
         try:
-            self._driver.get("https://www.instagram.com/")
+            self._driver.get("https://www.instagram.com/accounts/login")
             sleep(2)
-
-            # Pass the sign-up page
-            try:
-                self._driver.find_element_by_css_selector("._g9ean a").click()
-            except:
-                pass
             
             # Send user info
             self._driver.find_element_by_name("username").send_keys(username)
@@ -108,7 +102,7 @@ class Turtle:
                 pass
             
             try:
-                self._driver.find_element_by_class_name("coreSpriteSearchIcon")
+                self._driver.find_element_by_css_selector(".coreSpriteDesktopNavProfile")
                 self.log.append("Username and Password are correct.")
                 self._status_sign_in = True                
                 return True
@@ -140,14 +134,14 @@ class Turtle:
             
             self.log.append("Listing stories...")
             
-            photo_total = int(self._driver.find_element_by_class_name("_fd86t").text.replace(".", "").replace(",",""))
+            photo_total = int(self._driver.find_element_by_class_name("g47SY").text.replace(".", "").replace(",",""))
             imgLinks = []
             count = 0
             error = 0
 
             while len(imgLinks) != photo_total:
                 # Find all photos of current page
-                imgList = self._driver.find_elements_by_css_selector("._mck9w a")
+                imgList = self._driver.find_elements_by_css_selector(".v1Nh3 a")
                 
                 # Add the photos to list if not exists
                 for idx, img in enumerate(imgList):

@@ -262,9 +262,6 @@ class Turtle:
                         # Create Name
                         s = img_link.split("/")
                         name = time + s[-1].split("?")[0]
-                        
-                        print("### s :", s)
-                        print("### name :", name)
 
                         # Download photos
                         if is_video:    path = self._pic_user_vid_path + "/" + name

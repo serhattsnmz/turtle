@@ -89,7 +89,7 @@ class Turtle:
             self._driver.find_element_by_name("username").send_keys(username)
             self._driver.find_element_by_name("password").send_keys(password)
             self._driver.find_element_by_tag_name("button").click()   
-            sleep(4)
+            sleep(6)
 
             # If there is 2 factor verification
             try:
@@ -332,6 +332,7 @@ class Turtle:
 
 class Turtle_Quick:
 
+    @staticmethod
     def download_all_user_pic(username, password, pic_user, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:
@@ -343,6 +344,7 @@ class Turtle_Quick:
         t.close()
         del(t)
 
+    @staticmethod
     def update_user_pic(username, password, pic_user, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:
@@ -354,6 +356,7 @@ class Turtle_Quick:
         t.close()
         del(t)
 
+    @staticmethod
     def download_some_user_pic(username, password, pic_user, count, path = None, driver = Driver.PHANTOM):
         t = Turtle()
         if path:

@@ -88,7 +88,7 @@ class Turtle:
             # Send user info
             self._driver.find_element_by_name("username").send_keys(username)
             self._driver.find_element_by_name("password").send_keys(password)
-            self._driver.find_element_by_tag_name("button").click()   
+            self._driver.find_element_by_css_selector("button[type='submit']").click()   
             sleep(6)
 
             # If there is 2 factor verification

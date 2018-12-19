@@ -102,7 +102,7 @@ class Turtle:
                 pass
             
             try:
-                self._driver.find_element_by_css_selector(".coreSpriteDesktopNavProfile")
+                self._driver.find_element_by_css_selector("a[href='/explore/']")
                 self.log.append("Username and Password are correct.")
                 self._status_sign_in = True                
                 return True

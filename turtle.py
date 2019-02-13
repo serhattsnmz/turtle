@@ -95,7 +95,29 @@ class Turtle:
             try:
                 self._driver.find_element_by_name("verificationCode")
                 self.log.append("Username and Password are correct.")
-                self.log.append("## (ERROR) Verification Found!")
+                self.log.append("## (INFO) Verification Found!")
+
+                # Verification Code
+                for i in range(5):
+                    try :
+                        code = input("The code, sent to your phone by Instagram : ")
+                        print("lvl1")
+                        self._driver.find_element_by_name("verificationCode").clear()
+                        print("lvl2")
+                        self._driver.find_element_by_name("verificationCode").send_keys(code)
+                        print("lvl3")
+                        self._driver.find_element_by_css_selector("button[type='button']").click()
+                        print("lvl4")
+                        
+                        sleep(7)
+                        self._driver.find_element_by_css_selector("a[href='/explore/']")
+                        self.log.append("Username and Password are correct.")
+                        self._status_sign_in = True    
+                        return True
+                    except :
+                        self.log.append("Verification Error!")
+                
+                self.log.append("## (ERROR) Exit verification cycle.")
                 self._status_sign_in = False
                 return False
             except:

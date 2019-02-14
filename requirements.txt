@@ -1,3 +1,4 @@
-colorama==0.3.9
-termcolor==1.1.0
-selenium==3.14.0
+colorama==0.4
+termcolor==1.1
+selenium==3.14
+tabulate==0.8

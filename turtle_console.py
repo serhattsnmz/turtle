@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from getpass        import getpass
-from colorama       import init, deinit, Fore
+from colorama       import init, deinit, Fore, Style
 from termcolor      import colored, cprint
+from tabulate       import tabulate
 
 from turtle         import Turtle, Driver, Download_Choice
 
@@ -196,7 +197,7 @@ def core():
     # Config
     parse_args()
     create_config_if_not_exist()
-    init()
+    init(autoreset=True)
     clear_screen()
 
     # Header
@@ -279,11 +280,20 @@ def core():
                     t.log.append("-------------------------------")
 
                 # Add all user report to Log file
+                t.log.append("")
                 t.log.append("$$ ALL DOWNLOAD RESULT $$")
                 t.log.append("-------------------------")
+
+                table_headers = [Style.BRIGHT + Fore.MAGENTA + "STATUS", "TOTAL DOWNLOAD", "USERNAME"]
+                table_content = []
+
                 for item in report:
-                    t.log.append("$$ " + str(item[1]) + " $$ Total Download : " + str(item[2]) + " $$ " + str(item[0]))
-                t.log.append("-------------------------")
+                    item_color = Fore.GREEN if item[1] else Fore.RED
+                    table_content.append([item_color + str(item[1]), str(item[2]), str(item[0])])
+
+                t.log.append(tabulate(table_content, headers=table_headers, tablefmt="presto", colalign=("center", "center", "center")))
+
+                t.log.append("")
 
             t.close()
 

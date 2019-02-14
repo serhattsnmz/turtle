@@ -32,7 +32,7 @@
             - Untar it
                 - `tar xvjf phantomjs-2.1.1-linux-x86_64.tar.bz2`
             - Moved the phantomjs executable to /usr/bin/ (may need sudo)
-                - `cp /path/to/phantom/untar/bin/phantomjs /usr/bin/`
+                - `sudo cp /path/to/phantom/untar/bin/phantomjs /usr/bin/`
         - For Windows
             - Download the `PhantomJS` with link below :
                 - [PhatomJs Download Page](http://phantomjs.org/download.html "PhatomJs Download Page")
@@ -53,7 +53,7 @@
             - Make it executable
                 - `chmod +x geckodriver`
             - Moved the geckoDriver executable to /usr/bin/ (may need sudo)
-                - `cp /path/to/geckoDriver /usr/bin/`
+                - `sudo cp /path/to/geckoDriver /usr/bin/`
         - For Windows
             - Download the `GeckoDriver` with link below :
                 - [GeckoDriver Download Page](https://github.com/mozilla/geckodriver/releases)

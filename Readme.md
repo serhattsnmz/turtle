@@ -19,7 +19,7 @@
 ## How to install and run
 
 1. Download the source from Github
-    - `git clone https://github.com/serhatsnmz/turtle.git`
+    - `git clone https://github.com/serhattsnmz/turtle.git`
     - `cd turtle`
 2. Install requirements
 	- `pip install -r requirements.txt`

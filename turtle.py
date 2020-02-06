@@ -156,7 +156,10 @@ class Turtle:
             
             self.log.append("Listing stories...")
             
-            photo_total = int(self._driver.find_element_by_class_name("g47SY").text.replace(".", "").replace(",",""))
+            try:
+                photo_total = int(self._driver.find_element_by_class_name("g47SY").text.replace(".", "").replace(",",""))
+            except:
+                raise Exception("Username cannot found! Please check username if it is valid for any user.")
             imgLinks = []
             count = 0
             error = 0

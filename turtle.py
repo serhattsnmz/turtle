@@ -184,9 +184,12 @@ class Turtle:
 
                 # If program stops  to collect links> then break while
                 if error == 10:
-                    self.log.append("## (ERROR) Circle broken for user : " + pic_user)
-                    self._status_links = False
-                    return False
+                    if len(imgLinks) < photo_total - 1:
+                        self.log.append("## (ERROR) Circle broken for user : " + pic_user)
+                        self._status_links = False
+                        return False
+                    else:
+                        break
                 
                 # Scroll down the picture
                 self._driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")

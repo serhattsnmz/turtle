@@ -37,16 +37,16 @@
             - Download the `PhantomJS` with link below :
                 - [PhatomJs Download Page](http://phantomjs.org/download.html "PhatomJs Download Page")
             - Copy `path\phantomjs-2.1.1-windows\bin\phantomjs.exe` file to `C:\Program Files (x86)\Python36-32\Scripts`
-    - Download and install `ChromeDriver` (Opsional)
+    - Download and install `ChromeDriver` (Optional)
         - For Linux
             - [Download ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) 
             - Moved the ChromeDriver executable to /usr/bin/ (may need sudo)
         - For Windows
             - [Download ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads) 
             - Copy `path\chromedriver.exe` file to `C:\Program Files (x86)\Python36-32\Scripts`
-    - Download and install `GeckoDriver` for Firefox (Opsional)
+    - Download and install `GeckoDriver` for Firefox (Optional)
         - For Linux
-            - Wget the lasted GeckoDriver (as per [GeckoDriver Download Page](https://github.com/mozilla/geckodriver/releases))
+            - Wget the latest GeckoDriver (as per [GeckoDriver Download Page](https://github.com/mozilla/geckodriver/releases))
                 - `wget https://github.com/mozilla/geckodriver/releases/download/v0.18.0/geckodriver-v0.18.0-linux64.tar.gz`
             - Untar it
                 - `tar -xvzf geckodriver*`
@@ -67,7 +67,7 @@ Simply call `python turtle_console.py`
 
 First you have to choose a driver, PhantomJs, Firefox or Chrome.
 
-It will ask for your Instagram username and password for logging in (If you did not define them in config.js). Then it will ask for a username which user's photo you want to download.
+It will ask for your Instagram username and password for logging in (If you did not define them in config.js). Then it will ask for a username which user's photos you want to download.
 
 You can download:
 - All user's photos

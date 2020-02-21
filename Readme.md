@@ -1,3 +1,8 @@
+> IMPORTANT NOTE
+> --------------
+> This repo is no longer updating.  
+> Please use the newest and fastest [Rabbitgram](https://github.com/serhattsnmz/rabbitgram) instead.
+
 ## Turtle (Instagram Photo Downloader)
 
 - It is for downloading your friend's photos and videos with your account.
